@@ -2,30 +2,34 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function Calculator() {
-  const [num2, setNum2] = useState('');
-  const [num3, setNum3] = useState('');
-  const [num4, setNum4] = useState('');
+  const [principal, setPrincipal] = useState('');
+  const [rate, setRate] = useState('');
+  const [time, setTime] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-
-  const handleNum2Change = (event) => {
-    setNum2(event.target.value);
+  const handlePrincipalChange = (event) => {
+    setPrincipal(event.target.value);
   };
-  const handleNum3Change = (event) => {
-    setNum3(event.target.value);
-  };
-
-  const handleNum4Change = (event) => {
-    setNum4(event.target.value);
+  
+  const handleRateChange = (event) => {
+    setRate(event.target.value);
   };
 
+  const handleTimeChange = (event) => {
+    setTime(event.target.value);
+  };
 
-  const calculateSum = async () => {
+  const calculateCompoundInterest = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`https://api.example.com/add?num1=${num3}&num2=${num2}`);
+      setError('');
+      const response = await axios.post('http://localhost:3000/calculate', {
+        principal,
+        rate,
+        time
+      });
       setResult(response.data.result);
       setLoading(false);
     } catch (error) {
@@ -36,35 +40,35 @@ function Calculator() {
 
   return (
     <div>
-      <h2>Calculadora de Juros</h2>
+      <h2>Calculadora de Juros Compostos</h2>
       <div>
-        <label htmlFor="investimentoMensal">Investimento Mensal: </label>
+        <label htmlFor="principal">Investimento Inicial: </label>
         <input
           type="number"
-          id="investimentoMensal"
-          value={num2}
-          onChange={handleNum2Change}
+          id="principal"
+          value={principal}
+          onChange={handlePrincipalChange}
         />
       </div>
       <div>
-        <label htmlFor="TaxaJurosM">Taxas de Juros Mensal: </label>
+        <label htmlFor="rate">Taxa de Juros Mensal (%): </label>
         <input
           type="number"
-          id="TaxaJurosM"
-          value={num3}
-          onChange={handleNum3Change}
+          id="rate"
+          value={rate}
+          onChange={handleRateChange}
         />
       </div>
       <div>
-        <label htmlFor="PeriodoTempom">Período de tempo (meses): </label>
+        <label htmlFor="time">Período de Tempo (meses): </label>
         <input
           type="number"
-          id="PeriodoTempoM"
-          value={num4}
-          onChange={handleNum4Change}
+          id="time"
+          value={time}
+          onChange={handleTimeChange}
         />
       </div>
-      <button onClick={calculateSum} disabled={loading}>
+      <button onClick={calculateCompoundInterest} disabled={loading}>
         {loading ? 'Carregando...' : 'Calcular!'}
       </button>
       {error && <div>Error: {error}</div>}
